@@ -1,4 +1,6 @@
-# cognitive-computing-book
-Code examples for the book https://leanpub.com/cognitive-computing
+# Examples for "Introduction to Cognitive Computing. A Guide for Individuals and Small Organizations"
 
-### I will post the example code in early spring of 2017 when early copies of my book should be available.
+This git repository contains the examples for my short book [Introduction to Cognitive Computing](https://leanpub.com/cognitive-computing/)
+
+
+
