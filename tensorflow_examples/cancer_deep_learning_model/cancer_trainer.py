@@ -1,26 +1,31 @@
-import tensorflow as tf
-import numpy as np
+from keras.models import Sequential # Keras by default imports and uses Tensorflow
+from keras.layers import Dense
+from keras import optimizers
+from keras.callbacks import TensorBoard
+import pandas
 
-training_set = tf.contrib.learn.datasets.base.load_csv_without_header(filename="train.csv", target_dtype=np.int, features_dtype=np.float32)
-test_set =     tf.contrib.learn.datasets.base.load_csv_without_header(filename="test.csv",  target_dtype=np.int, features_dtype=np.float32)
+train = pandas.read_csv("train.csv", header=None).values
+X_train = train[:,0:9].astype(float) # 9 inputs
+Y_train = train[:,-1].astype(float)  # one target output (0 for no cancer, 1 for malignant)
+test = pandas.read_csv("test.csv", header=None).values
+X_test = test[:,0:9].astype(float)
+Y_test = test[:,-1].astype(float)
 
-feature_columns = [tf.contrib.layers.real_valued_column("", dimension=9)]
+model = Sequential()
+model.add(Dense(12, input_dim=9, activation='relu'))
+model.add(Dense(12, input_dim=12, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+model.summary()
 
-classifier = tf.contrib.learn.DNNClassifier(feature_columns=feature_columns, hidden_units=[12, 12, 12], n_classes=2)
+model.compile(optimizer=optimizers.RMSprop(lr=0.002),
+              loss='mse',
+              metrics=['accuracy'])
 
-# note: to set L1 or L2 regularization (for overfitting), learning rate, etc.
-#       then use DNNClassifier options described in:
-# https://www.tensorflow.org/versions/r0.9/api_docs/python/contrib.learn.html#DNNClassifier
+callbacks = [TensorBoard(log_dir='logdir',histogram_freq=0,write_graph=True, write_images=False)]
 
-classifier.fit(x=training_set.data, y=training_set.target, steps=500)
+model.fit(X_train, Y_train, batch_size=50, epochs=10, callbacks=callbacks)
 
-accuracy = classifier.evaluate(x=test_set.data, y=test_set.target)["accuracy"]
-print('Accuracy: {0:f}'.format(accuracy))
+# no cancer and malignant test samples:
+y_predict = model.predict([[4,1,1,3,2,1,3,1,1], [3,7,7,4,4,9,4,8,1]])
 
-no_and_yes_samples = np.array(
-        [[4,1,1,3,2,1,3,1,1], [3,7,7,4,4,9,4,8,1]], dtype=np.int)
-y = classifier.predict(no_and_yes_samples)
-for yval in y:
-  print ('Predictions: {}'.format(str(yval)))
-
-
+print("* y_predict (should be close to [0, 1]):", y_predict)
