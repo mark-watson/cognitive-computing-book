@@ -1,12 +1,12 @@
 # Install Facebook's fasttext
 
-research paper: "Bag of Tricks for Efficient Text Classification" https://arxiv.org/pdf/1607.01759v3.pdf
+Research paper: "Bag of Tricks for Efficient Text Classification" https://arxiv.org/pdf/1607.01759v3.pdf
 
 github repo: https://github.com/facebookresearch/fastText
 
 Build system (no dependencies on my macOS laptop: built with 'make'). Make sure 'fasttext' is on PATH
 
-# using my kbsportal training data for classification
+# Using my kbsportal training data for classification
 
 fasttext supervised -input fasttext_training.txt -output model
 fasttext predict model.bin fasttext_training.txt  1
